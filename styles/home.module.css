@@ -1,0 +1,17 @@
+.sidebar {
+    background-color: lightgray;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.page {
+    display: flex;
+}
+
+.control_panel {
+  display: flex;
+}

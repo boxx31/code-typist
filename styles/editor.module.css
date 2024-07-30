@@ -1,0 +1,26 @@
+.container {
+    display: grid;
+}
+
+.container div {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 1.5rem;
+    height: 400px;
+    border: 1px solid hsl(0, 0%, 80%);
+    padding: 2px;
+    display: inline-block;
+    white-space: pre-wrap;
+}
+
+.editor {
+    background-color: transparent;
+    color: black;
+    z-index: 1;
+}
+
+.ghost {
+    color: gray;
+    z-index: 0;
+}
+
