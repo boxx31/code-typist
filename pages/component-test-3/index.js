@@ -1,8 +1,22 @@
-import { useRef } from 'react';
-import styles from "../styles/editor.module.css";
+import { useState , useRef } from 'react';
+import styles from "../../styles/editor.module.css";
 import parse from "html-react-parser";
+import { IBM_Plex_Mono } from "next/font/google";
 
-export default function Editor({content, ghostContent}) {
+const plexMono = IBM_Plex_Mono({
+    weight: "400",
+    style: ["normal", "italic"],
+    subsets: ["latin"]
+});
+
+export default function Home({pageProps}) {
+    const [code, setCode] = useState("Def");
+    return (
+        <Component {...pageProps} content={{"get": code, "set": setCode}} ghostContent={"Default text\nNew line"} />
+    );
+}
+
+function Component({content, ghostContent}) {
     const defaultValue = useRef(content.get);
     const handleInput = (event) => {
         if (content.set) {
@@ -61,7 +75,7 @@ export default function Editor({content, ghostContent}) {
         }
     }
     return (
-        <div className={styles.container}>
+        <div className={[styles.container, plexMono.className].join(" ")}>
             <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost}>{parse(generateGhostText(content.get))}</span>
             <span contentEditable suppressContentEditableWarning={true} spellcheck="false" onKeyDown={keyHandler} onInput={handleInput} className={styles.editor} dangerouslySetInnerHTML={{ __html: defaultValue.current }}></span>
         </div>

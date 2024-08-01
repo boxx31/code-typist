@@ -58,8 +58,8 @@ export default function Home() {
                     <section>
                         <p>Select an exercise to begin</p>
                     </section>
-                    <section className={plexMono.className}>
-                        <Editor text={{"get": code, "set": setCode}} />
+                    <section className={[styles.workspace, plexMono.className].join(" ")}>
+                        <Editor content={{"get": code, "set": setCode}} ghostContent={"Default text\nNew line"} />
                         <textarea rows={20} cols={100} placeholder={"Output will appear here..."} readOnly value={output}></textarea>
                     </section>
                     <section className={styles.control_panel}>
@@ -67,14 +67,6 @@ export default function Home() {
                         <button onClick={restartHandler}>Restart</button>
                         <button onClick={chatHandler}>Open Chat</button>
                         <Selector onClick={modeHandler} />
-                    </section>
-                    <section>
-                        <p>Challenges:</p>
-                        <ul>
-                            <li>No guide text</li>
-                            <li>Edit the program</li>
-                            <li>Time challenge</li>
-                        </ul>
                     </section>
                 </div>
                 <nav className={styles.sidebar}>
