@@ -1,0 +1,27 @@
+Summary:
+Temporary title: "Code Typist"
+Exercises: printing, variables, if-statements, loops, user input, arrays, classes
+Modes: guided, time challenge, free mode, debugging
+User actions: (Select exercise) > (Select mode ["guided" default]) > (Type & debug & run) > (Switch mode)
+
+Todo:
+- Change links to buttons (don’t reload screen every time)
+- Make sure user can switch between exercises and modes
+- Make "guided" mode fully functional
+- Make "free mode" mode fully functional
+- Make "time challenge" mode fully functional
+- Save user progress across exercises
+- Research OPENAI API calls
+- If time: Make sure there are no security problems
+- If time: login system
+- If time: "debugging" mode fully functional
+
+Further description:
+In the debugging 
+mode the user gets a similar program in which they must fix 
+the error. (This mode will only be implemented if I have time). 
+In the time challenge all ghost text is replaced by dots, and 
+the user must type the program as fast as possible. In free mode, 
+the user can edit however they want without ghost text. The AI 
+assistant could switch between modes and exercises, generate 
+programs with bugs, and guide the user in error messages.
