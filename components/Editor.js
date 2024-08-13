@@ -1,15 +1,20 @@
-import { useRef } from 'react';
 import styles from "../styles/editor.module.css";
-import parse from "html-react-parser";
+import { useEffect } from "react";
 
-export default function Editor({content, ghostContent}) {
-    const defaultValue = useRef(content.get);
+export default function Editor({content, override, ghostContent}) {
+    useEffect(() => {
+        content.set(override.code);
+    }, [override]);
     const handleInput = (event) => {
         if (content.set) {
             content.set(event.target.textContent);
         }
+        console.log("Current text content: " + content.get);
     };
     function generateGhostText(rawText) {
+        if (ghostContent.length == 0) {
+            return rawText;
+        }
         var ghost = "";
         var ind1 = 0;
         var ind2 = 0;
@@ -50,7 +55,7 @@ export default function Editor({content, ghostContent}) {
             var sel = doc.getSelection();
             var range = sel.getRangeAt(0);
 
-            var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+            var tabNode = document.createTextNode("    ");
             range.insertNode(tabNode);
 
             range.setStartAfter(tabNode);
@@ -60,10 +65,28 @@ export default function Editor({content, ghostContent}) {
             handleInput(evt);
         }
     }
+    function pasteHandler(evt) {
+        evt.preventDefault();
+        var text = evt.clipboardData.getData('text/plain').replaceAll("\r", "");
+        var doc = evt.currentTarget.ownerDocument.defaultView;
+        var sel = doc.getSelection();
+        var range = sel.getRangeAt(0);
+
+        var textNode = document.createTextNode(text);
+        range.insertNode(textNode);
+
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode); 
+        sel.removeAllRanges();
+        sel.addRange(range);
+        handleInput(evt);
+    }
     return (
         <div className={styles.container}>
-            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost}>{parse(generateGhostText(content.get))}</span>
-            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" onKeyDown={keyHandler} onInput={handleInput} className={styles.editor} dangerouslySetInnerHTML={{ __html: defaultValue.current }}></span>
+            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost} 
+                dangerouslySetInnerHTML={{__html: generateGhostText(content.get)}}></span>
+            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" onKeyDown={keyHandler} onPaste={pasteHandler} onInput={handleInput} 
+                key={override.key} className={styles.editor} dangerouslySetInnerHTML={{__html: override.code}}></span>
         </div>
     );
 }
