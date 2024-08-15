@@ -1,7 +1,7 @@
 import styles from "../styles/editor.module.css";
 import { useEffect } from "react";
 
-export default function Editor({content, override, ghostContent}) {
+export default function Editor({content, override, mode, ghostContent}) {
     useEffect(() => {
         content.set(override.code);
     }, [override]);
@@ -9,10 +9,9 @@ export default function Editor({content, override, ghostContent}) {
         if (content.set) {
             content.set(event.target.textContent);
         }
-        console.log("Current text content: " + content.get);
     };
     function generateGhostText(rawText) {
-        if (ghostContent.length == 0) {
+        if (ghostContent.program.length == 0) {
             return rawText;
         }
         var ghost = "";
@@ -21,8 +20,8 @@ export default function Editor({content, override, ghostContent}) {
         if (rawText[rawText.length-1] == "\n") {                            // trim last newline (contenteditable adds additional newline)
             rawText = rawText.substring(0, rawText.length-1);
         }
-        while (ind1 < rawText.length && ind2 < ghostContent.length) {       // use two pointers to generate ghost text
-            if (rawText[ind1] == ghostContent[ind2]) {
+        while (ind1 < rawText.length && ind2 < ghostContent.program.length) {       // use two pointers to generate ghost text
+            if (rawText[ind1] == ghostContent.program[ind2]) {
                 ghost += rawText[ind1];
                 ind1++;
                 ind2++;
@@ -35,9 +34,13 @@ export default function Editor({content, override, ghostContent}) {
                 ind1++;
             }
         }
-        if (ind1 == rawText.length && ind2 < ghostContent.length) {
-            ghost += ghostContent.substring(ind2);
-        } else if (ind1 < rawText.length && ind2 == ghostContent.length) {
+        if (ind1 == rawText.length && ind2 < ghostContent.program.length) {
+            if (mode == 1) {
+                ghost += ghostContent.style.substring(ind2).replaceAll("_", "\u2022");
+            } else {
+                ghost += ghostContent.program.substring(ind2);
+            }
+        } else if (ind1 < rawText.length && ind2 == ghostContent.program.length) {
             for (var i = ind1; i < rawText.length; i++) {
                 if (rawText[i] == "\n") {
                     ghost += rawText[i];
@@ -67,6 +70,9 @@ export default function Editor({content, override, ghostContent}) {
     }
     function pasteHandler(evt) {
         evt.preventDefault();
+        if (mode == 1) {
+            return;
+        }
         var text = evt.clipboardData.getData('text/plain').replaceAll("\r", "");
         var doc = evt.currentTarget.ownerDocument.defaultView;
         var sel = doc.getSelection();
