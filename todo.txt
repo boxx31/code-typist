@@ -15,17 +15,16 @@ assistant could switch between modes and exercises, generate
 programs with bugs, and guide the user in error messages.
 
 Todo:
-- Make "guided" mode fully functional
-- Make "free mode" mode fully functional
-- Make "time challenge" mode fully functional
+- Make "guided" mode fully functional (provide comments)
 - Research OPENAI API calls
 - Add error interpretation
-- If time: Make sure there are no security problems
 
 Bugs:
 - TYP-3: No memory limit cap
   - Fixing this apparently requires lots of time
 - TYP-5: All forms of non-default code text changing doesn't work (restart button, changing pages)
+- TYP-6: No text limit
+- TYP-7: Layout: No resize on open console menu
 
 Fixed:
 - TYP-1: Copy and paste can change font + add desync
