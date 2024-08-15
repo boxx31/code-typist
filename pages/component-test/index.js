@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState , useRef } from 'react';
 import styles from "../../styles/editor.module.css";
 import parse from "html-react-parser";
 import { IBM_Plex_Mono } from "next/font/google";
@@ -10,66 +10,74 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export default function Home({pageProps}) {
-    const [code, setCode] = useState("Default text");
+    const [code, setCode] = useState("Def");
     return (
-        <Component {...pageProps} text={{"get": code, "set": setCode}} />
+        <Component {...pageProps} content={{"get": code, "set": setCode}} ghostContent={"Default text\nNew line"} />
     );
 }
 
-function generateGhostText(typed, solution) {
-    var ghost = "";
-    var ind1 = 0;
-    var ind2 = 0;
-    console.log(typed);
-    while (ind1 < typed.length && ind2 < solution.length) {
-        if (typed[ind1] == solution[ind2]) {
-            ghost += typed[ind1];
-            ind1++;
-            ind2++;
-        } else {
-            ghost += "<mark>" + typed[ind1] + "</mark>";
-            ind1++;
+function Component({content, ghostContent}) {
+    const defaultValue = useRef(content.get);
+    const handleInput = (event) => {
+        if (content.set) {
+            content.set(event.target.textContent);
         }
-    }
-    if (ind1 == typed.length && ind2 < solution.length) {
-        ghost += solution.substring(ind2);
-    } else if (ind1 < typed.length && ind2 == solution.length) {
-        ghost += "<mark>" + typed.substring(ind2) + "</mark>";
-    }
-    console.log(ghost);
-    return ghost;
-}
-
-function Component({text}) {
-    function cursor_position() {
-        var sel = document.getSelection();
-        sel.modify("extend", "backward", "paragraphboundary");
-        var pos = sel.toString().length;
-        if(sel.anchorNode != undefined) sel.collapseToEnd();
-        return pos;
+    };
+    function generateGhostText(rawText) {
+        var ghost = "";
+        var ind1 = 0;
+        var ind2 = 0;
+        if (rawText[rawText.length-1] == "\n") {                            // trim last newline (contenteditable adds additional newline)
+            rawText = rawText.substring(0, rawText.length-1);
+        }
+        while (ind1 < rawText.length && ind2 < ghostContent.length) {       // use two pointers to generate ghost text
+            if (rawText[ind1] == ghostContent[ind2]) {
+                ghost += rawText[ind1];
+                ind1++;
+                ind2++;
+            } else {
+                if (rawText[ind1] == "\n") {
+                    ghost += rawText[ind1];
+                } else {
+                    ghost += "<mark>" + rawText[ind1] + "</mark>";
+                }
+                ind1++;
+            }
+        }
+        if (ind1 == rawText.length && ind2 < ghostContent.length) {
+            ghost += ghostContent.substring(ind2);
+        } else if (ind1 < rawText.length && ind2 == ghostContent.length) {
+            for (var i = ind1; i < rawText.length; i++) {
+                if (rawText[i] == "\n") {
+                    ghost += rawText[i];
+                } else {
+                    ghost += "<mark>" + rawText[i] + "</mark>";
+                }
+            }
+        }
+        return ghost;
     }
     function keyHandler(evt) {
-        switch (evt.keyCode) {
-            case 9:
-                evt.preventDefault();
-                console.log(evt.currentTarget.innerHTML);
-                console.log(cursor_position());
-                evt.currentTarget.innerHTML += "\t";
-                text.set(evt.currentTarget.innerHTML);
-            break;
-            case 13:
-                evt.preventDefault();
-                evt.currentTarget.innerHTML += "\n";
-                text.set(evt.currentTarget.innerHTML);
-                evt.currentTarget.focus();
-            break;
+        if (evt.key == "Tab") {                                             // manually simulate tab press = 4 spaces
+            evt.preventDefault();
+            var doc = evt.currentTarget.ownerDocument.defaultView;
+            var sel = doc.getSelection();
+            var range = sel.getRangeAt(0);
+
+            var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+            range.insertNode(tabNode);
+
+            range.setStartAfter(tabNode);
+            range.setEndAfter(tabNode); 
+            sel.removeAllRanges();
+            sel.addRange(range);
+            handleInput(evt);
         }
     }
     return (
         <div className={[styles.container, plexMono.className].join(" ")}>
-            <div contentEditable={true} suppressContentEditableWarning={true} className={styles.ghost}>{parse(generateGhostText(text.get, "Default text\nNew line"))}</div>
-            <div contentEditable={true} defaultValue={parse(text.get)} onKeyDown={keyHandler} onInput={(e) => {text.set(e.currentTarget.innerHTML)}} className={styles.editor}></div>
-            <pre></pre>
+            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost}>{parse(generateGhostText(content.get))}</span>
+            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" onKeyDown={keyHandler} onInput={handleInput} className={styles.editor} dangerouslySetInnerHTML={{ __html: defaultValue.current }}></span>
         </div>
     );
 }

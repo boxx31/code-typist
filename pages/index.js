@@ -1,48 +1,128 @@
 import Editor from "../components/Editor.js";
 import Selector from "../components/Selector.js";
-import Link from 'next/link';
-import { useState } from 'react';
-import { IBM_Plex_Mono } from "next/font/google";
+import { useState, useEffect } from 'react';
 import styles from "../styles/home.module.css";
 import { runJavaCode } from "../services/api.js";
-import OpenAI from "openai";
-
-const plexMono = IBM_Plex_Mono({
-    weight: "400",
-    style: ["normal", "italic"],
-    subsets: ["latin"]
-});
-//const openai = new OpenAI();
+import { useRef } from 'react';
+import { plexMono, tab, styleKeys, pageKeys, pageData, classNames, instructions, ghostPrograms, ghostStyle, expectedOutput } from "../indexConstants.js";
 
 export default function Home() {
-    const [code, setCode] = useState("Default text");
-    const [status, setStatus] = useState("typing");
+    const [code, setCode] = useState("");
+    const [overrideCode, setOverrideCode] = useState({key: true, code: ""});
     const [output, setOutput] = useState("");
-    const [progress, setProgress] = useState(["not attempted"]);
-    const pageLinks = [
-        {"key": 1, "text": "Exercise 1"},
-        {"key": 2, "text": "Exercise 2"},
-        {"key": 3, "text": "Exercise 3"}
-    ];
-    async function runHandler() {
-        const output = await runJavaCode("Program", code);
-        setOutput(output.output + "\n" + output.error);
+    const [page, setPage] = useState(1);
+    const [mode, setMode] = useState(0);
+    const [progress, setProgress] = useState(createPageData("not attempted"));
+    const [timerValue, setTimerValue] = useState(0);
+    const [recordTime, setRecordTime] = useState(createPageData("None"));
+    // My records: Hello world - 15.5
+    
+    const timerActive = useRef(false);
+    const savedCode = useRef(createPageData(""));
+    const interval = useRef(null);
 
-        /*if(code === "print(\"Hello World!\")") {
-            setOutput("Hello World!\n");
+    useEffect(() => {
+        /*
+        Summary:
+        When first character is entered: Change progress, start timer (challenge only)
+        When last character is entered: Change progress, stop timer (challenge only)
+        When page/mode is changed: Stop and reset timer if run (challenge only)
+        When there are no characters: Change progress
+        */
+        if (code.length == 0) {
+            var newProgress = {...progress};
+            newProgress[page] = "not attempted";
+            setProgress(newProgress);
+        } else if (code == ghostPrograms[page]) {
+            var newProgress = {...progress};
+            newProgress[page] = "complete";
+            setProgress(newProgress);
+
+            if (timerActive.current) {
+                if (recordTime[page] == "None" || recordTime[page] > timerValue) {
+                    var newRecordTime = {...recordTime};
+                    newRecordTime[page] = timerValue.toFixed(1);
+                    setRecordTime(newRecordTime);
+                }
+                clearInterval(interval.current);
+                timerActive.current = false;
+                return;
+            }
         } else {
-            setOutput("Error message\n");
-        }*/
+            var newProgress = {...progress};
+            newProgress[page] = "in progress";
+            setProgress(newProgress);
+            
+            if (progress[page] == "not attempted") {
+                if (mode == 1) {
+                    interval.current = setInterval(runTimer, 100);
+                    timerActive.current = true;
+                    return;
+                }
+            }
+        }
+        clearInterval(interval.current);
+        setTimerValue(0);
+        timerActive.current = false;
+    }, [page, mode, code.length == 0, code == ghostPrograms[page]]);
+
+    function runTimer(){
+        setTimerValue((x) => (x + 0.1));
     }
-    function restartHandler() {
-        if (confirm("Are you sure you want to restart?")) {
-            setCode("");
-            setStatus("typing");
-            setOutput("");
+    function createPageData(item) {
+        var result = {};
+        for (const i of pageKeys) {
+            if (typeof item === "object") {
+                result[i] = {...item};
+            } else {
+                result[i] = item;
+            }
+        }
+        return result;
+    }
+    async function runHandler() {
+        var newSavedCode = {...savedCode.current};
+        newSavedCode[page] = code;
+        savedCode.current = newSavedCode;
+        const output = await runJavaCode(classNames[page], code);
+        setOutput(output.output + output.error);
+        if (output.error === "" && output.output.includes(expectedOutput[page])) {
+            var newProgress = {...progress};
+            newProgress[page] = "complete";
+            setProgress(newProgress);
         }
     }
-    function modeHandler() {
+    function restartHandler(requestMode) {
+        if (confirm("Are you sure you want to restart?")) {
+            var newCode = "";
+            if (requestMode == 2) {
+                newCode = "public class " + classNames[page] + ` {\n${tab}\n}`;
+            }
+            setOverrideCode({key: !overrideCode.key, code: newCode});
+            setOutput("");
+            var newProgress = {...progress};
+            newProgress[page] = "not attempted";
+            setProgress(newProgress);
+            return true;
+        }
+        return false;
+    }
+    function changePage(key) {
+        var newSavedCode = {...savedCode.current};
+        newSavedCode[page] = code;
+        savedCode.current = newSavedCode;
 
+        setPage(key);
+        setOverrideCode({key: !overrideCode.key, code: (savedCode.current)[key]});
+    }
+    function changeMode(modeKey) {
+        if ((modeKey == 0 || modeKey == 1) && code != "") {
+            if (!restartHandler(modeKey)) return;
+        }
+        if (modeKey == 2 && code.replaceAll("\n", "") == "") {
+            setOverrideCode({key: !overrideCode.key, code: "public class " + classNames[page] + ` {\n${tab}\n}`});
+        }
+        setMode(modeKey);
     }
     async function chatHandler() {
         
@@ -50,28 +130,45 @@ export default function Home() {
     return (
         <div>
             <header>
-                <h1>App Title</h1>
+                <h1>Code Typist</h1>
             </header>
             
             <main className={styles.page}>
                 <div>
                     <section>
-                        <p>Select an exercise to begin</p>
+                        <p>{instructions[page]}</p>
                     </section>
                     <section className={[styles.workspace, plexMono.className].join(" ")}>
-                        <Editor content={{"get": code, "set": setCode}} ghostContent={"Default text\nNew line"} />
+                        <Editor content={{"get": code, "set": setCode}} override={overrideCode} mode={mode} 
+                            ghostContent={(mode <= 1) ? {program: ghostPrograms[page], style: ghostStyle[page]} : {program: "", style: ""}} />
                         <textarea rows={20} cols={100} placeholder={"Output will appear here..."} readOnly value={output}></textarea>
                     </section>
                     <section className={styles.control_panel}>
                         <button onClick={runHandler}>Run</button>
-                        <button onClick={restartHandler}>Restart</button>
+                        <button onClick={() => restartHandler(mode)}>Restart</button>
                         <button onClick={chatHandler}>Open Chat</button>
-                        <Selector onClick={modeHandler} />
+                        <Selector selected={{"get": mode, "set": changeMode}} />
+                        {(mode == 1) ? (<p>Current time: {timerValue.toFixed(1)} sec | Record time: {recordTime[page]}{(recordTime[page] == "None") ? "":"s"}</p>) : null}
                     </section>
                 </div>
                 <nav className={styles.sidebar}>
-                    {pageLinks.map((a) => {
-                        return <Link href={"/exercise"+a.key}>{a.text}</Link>
+                    {pageData.map((a) => {
+                        if (a.key%10 == 0) {
+                            return (
+                                <div>
+                                    <button className={styles.nav_header}>{a.text}</button>
+                                    {a.children.map((b) => (
+                                        <button className={[styles.nav_button, styleKeys[progress[b.key]], (page == b.page) ? styles.current_button:""].join(" ")} 
+                                            onClick={() => changePage(b.key)}>{b.text}</button>
+                                    ))}
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <button className={[styles.nav_button, (page == a.page) ? styles.current_button:""].join(" ")} 
+                                    onClick={() => changePage(a.key)}>{a.text}</button>
+                            );
+                        }
                     })}
                 </nav>
             </main>
