@@ -1,4 +1,4 @@
-const url = "http://localhost:5274";
+const url = "https://sampletypiestvs1.azurewebsites.net";
 
 export const runJavaCode = async (className, code) => {
     try {
