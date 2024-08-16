@@ -1,17 +1,55 @@
 .sidebar {
-    background-color: lightgray;
+    background-color: rgb(194, 194, 194);
 }
 
-.sidebar a {
+.sidebar button {
     display: block;
     padding: 10px;
     text-decoration: none;
+    width: 100%;
+    border: none;
+}
+
+.nav_header {
+    font-size: 1.2rem;
+    font-style: bold;
+}
+
+.nav_button {
+    cursor: pointer;
+    color: #515151;
+    font-size: 1.0rem;
+}
+
+.nav_button:hover {
+    font-style: bold;
+}
+
+.not_attempted_button {
+    background-color: rgb(156, 151, 145);
+}
+
+.in_progress_button {
+    background-color: rgb(221, 199, 159);
+}
+
+.complete_button {
+    background-color: rgb(158, 202, 138);
+}
+
+.current_button {
+    border: 2px solid;
 }
 
 .page {
     display: flex;
 }
 
+.workspace {
+    display: flex;
+    flex-direction: row;
+}
+
 .control_panel {
-  display: flex;
+    display: flex;
 }
