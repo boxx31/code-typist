@@ -74,16 +74,6 @@ export const ghostStyle = {
         [`{`, `for (___ i = 1; i __ 100; i++) {`, `${tab}S_____.___.println(i);`, `}`].join(`\n${tab}${tab}`)
         + `\n${tab}}\n}`,
 }
-export const ghostComments = {
-    "1": ['Select an exercise on the right menu'],
-    "11": ['Type the gray characters', 'Tip: TAB key = four spaces', 'Print "Hello, world!"'],
-    "12": ['', '', 'Declare a variable num1 with value 7', 'Declare a variable num2 with value -5.63', 
-        'Declare a variable num3 equal to num1 + num2', 'Print the value of num3'],
-    "13": ['', '', 'Declare score = 15', 'Declare condition = true', 'Check if score is at least 12 and condition is true', 
-        'Print "Test passed!"', 'Print "Try again."'],
-    "14": ['', '', 'For loop from 1 to 100, inclusive']
-
-}
 export const expectedOutput = {
     "1": ``,
     "11": `Hello, world!`,

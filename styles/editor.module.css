@@ -6,9 +6,11 @@
     grid-column: 1;
     grid-row: 1;
     font-size: 1.2rem;
-    width: 50rem;
+    max-width: 80rem;
+    min-width: 50rem;
     height: 30rem;
-    overflow: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
     border: 1px solid hsl(0, 0%, 80%);
     padding: 2px;
     display: inline-block;
@@ -25,5 +27,10 @@
 .ghost {
     color: rgb(192, 192, 192);
     z-index: 0;
+}
+
+.ghost>span {
+    background-color: rgb(240, 219, 175);
+    color: rgb(102, 89, 61);
 }
 

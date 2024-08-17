@@ -1,7 +1,24 @@
 import styles from "../styles/editor.module.css";
 import { useEffect } from "react";
 
-export default function Editor({content, override, mode, ghostContent}) {
+const ghostComments = {
+    "1": ['Select an exercise on the right menu'],
+    "11": ['Type the gray characters', 'Tip: TAB key = four spaces', 'Print "Hello, world!"', '', ''],
+    "12": ['', '', 'Declare a variable num1 with value 7', 'Declare a variable num2 with value -5.63', 
+        'Declare a variable num3 equal to num1 + num2', 'Print the value of num3', '', ''],
+    "13": ['', '', 'Declare score = 15', 'Declare condition = true', 'Check if score is at least 12 and condition is true', 
+        'Print "Test passed!"', '', 'Print "Try again."', '', '', ''],
+    "14": ['', '', 'For loop from 1 to 100, inclusive', 'Print the current counter', '', '', '']
+}
+const commentsLocation = {
+    "1": 45,
+    "11": 45,
+    "12": 45,
+    "13": 47,
+    "14": 45
+}
+
+export default function Editor({content, override, page, mode, showGuide, ghostContent}) {
     useEffect(() => {
         content.set(override.code);
     }, [override]);
@@ -17,17 +34,21 @@ export default function Editor({content, override, mode, ghostContent}) {
         var ghost = "";
         var ind1 = 0;
         var ind2 = 0;
+        var lineNum = 0;
         if (rawText[rawText.length-1] == "\n") {                            // trim last newline (contenteditable adds additional newline)
             rawText = rawText.substring(0, rawText.length-1);
         }
         while (ind1 < rawText.length && ind2 < ghostContent.program.length) {       // use two pointers to generate ghost text
             if (rawText[ind1] == ghostContent.program[ind2]) {
+                if (rawText[ind1] == "\n") {
+                    lineNum++;
+                }
                 ghost += rawText[ind1];
                 ind1++;
                 ind2++;
             } else {
                 if (rawText[ind1] == "\n") {
-                    ghost += rawText[ind1];
+                    ghost += "\n";
                 } else {
                     ghost += "<mark>" + rawText[ind1] + "</mark>";
                 }
@@ -35,11 +56,22 @@ export default function Editor({content, override, mode, ghostContent}) {
             }
         }
         if (ind1 == rawText.length && ind2 < ghostContent.program.length) {
+            var ghostExtra;
             if (mode == 1) {
-                ghost += ghostContent.style.substring(ind2).replaceAll("_", "\u2022");
+                ghostExtra = ghostContent.style.substring(ind2).replaceAll("_", "\u2022");
             } else {
-                ghost += ghostContent.program.substring(ind2);
+                ghostExtra = ghostContent.program.substring(ind2);
             }
+            ghost += ghostExtra.split("\n").map((x, ind) => {
+                if (ghostComments[page][ind+lineNum] == "") {
+                    return x;
+                } else {
+                    if (rawText.lastIndexOf("\n") != -1 && ind == 0) {
+                        return x.padEnd(commentsLocation[page]-(rawText.length-rawText.lastIndexOf("\n")-1)) + " <span>// " + ghostComments[page][ind+lineNum] + "</span>";
+                    }
+                    return x.padEnd(commentsLocation[page]) + " <span>// " + ghostComments[page][ind+lineNum] + "</span>";
+                }
+            }).join("\n");
         } else if (ind1 < rawText.length && ind2 == ghostContent.program.length) {
             for (var i = ind1; i < rawText.length; i++) {
                 if (rawText[i] == "\n") {

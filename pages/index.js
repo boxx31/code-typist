@@ -15,6 +15,7 @@ export default function Home() {
     const [progress, setProgress] = useState(createPageData("not attempted"));
     const [timerValue, setTimerValue] = useState(0);
     const [recordTime, setRecordTime] = useState(createPageData("None"));
+    const [showGuide, setShowGuide] = useState(true);
     // My records: Hello world - 15.5
     
     const timerActive = useRef(false);
@@ -139,9 +140,9 @@ export default function Home() {
                         <p>{instructions[page]}</p>
                     </section>
                     <section className={[styles.workspace, plexMono.className].join(" ")}>
-                        <Editor content={{"get": code, "set": setCode}} override={overrideCode} mode={mode} 
+                        <Editor content={{"get": code, "set": setCode}} override={overrideCode} page={page} mode={mode} showCuide={showGuide}
                             ghostContent={(mode <= 1) ? {program: ghostPrograms[page], style: ghostStyle[page]} : {program: "", style: ""}} />
-                        <textarea rows={20} cols={100} placeholder={"Output will appear here..."} readOnly value={output}></textarea>
+                        <textarea className={styles.output} rows={20} placeholder={"Output will appear here..."} readOnly value={output}></textarea>
                     </section>
                     <section className={styles.control_panel}>
                         <button onClick={runHandler}>Run</button>

@@ -53,3 +53,7 @@
 .control_panel {
     display: flex;
 }
+
+.output {
+    min-width: 5rem;
+}
