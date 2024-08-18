@@ -2,7 +2,7 @@ import Editor from "../components/Editor.js";
 import Selector from "../components/Selector.js";
 import { useState, useEffect } from 'react';
 import styles from "../styles/home.module.css";
-import { runJavaCode } from "../services/api.js";
+import { runJavaCode, runChat } from "../services/api.js";
 import { useRef } from 'react';
 import { plexMono, tab, styleKeys, pageKeys, pageData, classNames, instructions, ghostPrograms, ghostStyle, expectedOutput } from "../indexConstants.js";
 
@@ -127,7 +127,16 @@ export default function Home() {
         setMode(modeKey);
     }
     async function chatHandler() {
-        
+        var userResponse = prompt("Do you have any experience in java coding?");
+        const chatOutput = await runChat(userResponse, page, mode, code, output);
+        switch (chatOutput.level) {
+            case "1":
+            case "2":
+            case "3":
+                changeMode(parseInt(chatOutput.level)-1);
+            default:
+                changeMode(0);
+        }
     }
     return (
         <div>
