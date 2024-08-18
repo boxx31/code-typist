@@ -1,5 +1,5 @@
 import styles from "../styles/editor.module.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const ghostComments = {
     "1": ['Select an exercise on the right menu'],
@@ -19,6 +19,7 @@ const commentsLocation = {
 }
 
 export default function Editor({content, override, page, mode, showGuide, ghostContent}) {
+    const scrollPos = useRef();
     useEffect(() => {
         content.set(override.code);
     }, [override]);
@@ -63,11 +64,13 @@ export default function Editor({content, override, page, mode, showGuide, ghostC
                 ghostExtra = ghostContent.program.substring(ind2);
             }
             ghost += ghostExtra.split("\n").map((x, ind) => {
-                if (ghostComments[page][ind+lineNum] == "") {
+                if (ghostComments[page][ind+lineNum] == "" || !showGuide) {
                     return x;
                 } else {
                     if (rawText.lastIndexOf("\n") != -1 && ind == 0) {
                         return x.padEnd(commentsLocation[page]-(rawText.length-rawText.lastIndexOf("\n")-1)) + " <span>// " + ghostComments[page][ind+lineNum] + "</span>";
+                    } else if (ind == 0) {
+                        return x.padEnd(commentsLocation[page]-rawText.length) + " <span>// " + ghostComments[page][ind+lineNum] + "</span>";
                     }
                     return x.padEnd(commentsLocation[page]) + " <span>// " + ghostComments[page][ind+lineNum] + "</span>";
                 }
@@ -119,12 +122,15 @@ export default function Editor({content, override, page, mode, showGuide, ghostC
         sel.addRange(range);
         handleInput(evt);
     }
+    function scrollHandler(evt) {
+        scrollPos.current.scrollTop = evt.target.scrollTop;
+    }
     return (
         <div className={styles.container}>
-            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost} 
+            <span contentEditable suppressContentEditableWarning={true} spellcheck="false" className={styles.ghost} ref={scrollPos} 
                 dangerouslySetInnerHTML={{__html: generateGhostText(content.get)}}></span>
             <span contentEditable suppressContentEditableWarning={true} spellcheck="false" onKeyDown={keyHandler} onPaste={pasteHandler} onInput={handleInput} 
-                key={override.key} className={styles.editor} dangerouslySetInnerHTML={{__html: override.code}}></span>
+                onScroll={scrollHandler} key={override.key} className={styles.editor} dangerouslySetInnerHTML={{__html: override.code}}></span>
         </div>
     );
 }

@@ -9,8 +9,7 @@
     max-width: 80rem;
     min-width: 50rem;
     height: 30rem;
-    overflow-x: scroll;
-    overflow-y: hidden;
+    overflow-y: scroll;
     border: 1px solid hsl(0, 0%, 80%);
     padding: 2px;
     display: inline-block;

@@ -121,7 +121,8 @@ export default function Home() {
             if (!restartHandler(modeKey)) return;
         }
         if (modeKey == 2 && code.replaceAll("\n", "") == "") {
-            setOverrideCode({key: !overrideCode.key, code: "public class " + classNames[page] + ` {\n${tab}\n}`});
+            setOverrideCode({key: !overrideCode.key, code: "public class " + classNames[page] + 
+                ` {\n${tab}public static void main(String[] args) {\n${tab}${tab}\n${tab}}\n}`});
         }
         setMode(modeKey);
     }
@@ -140,15 +141,20 @@ export default function Home() {
                         <p>{instructions[page]}</p>
                     </section>
                     <section className={[styles.workspace, plexMono.className].join(" ")}>
-                        <Editor content={{"get": code, "set": setCode}} override={overrideCode} page={page} mode={mode} showCuide={showGuide}
+                        <Editor content={{"get": code, "set": setCode}} override={overrideCode} page={page} mode={mode} showGuide={showGuide}
                             ghostContent={(mode <= 1) ? {program: ghostPrograms[page], style: ghostStyle[page]} : {program: "", style: ""}} />
                         <textarea className={styles.output} rows={20} placeholder={"Output will appear here..."} readOnly value={output}></textarea>
                     </section>
                     <section className={styles.control_panel}>
+                        <p>Toolbar</p>
                         <button onClick={runHandler}>Run</button>
                         <button onClick={() => restartHandler(mode)}>Restart</button>
                         <button onClick={chatHandler}>Open Chat</button>
                         <Selector selected={{"get": mode, "set": changeMode}} />
+                        <div>
+                            <input type={"checkbox"} defaultChecked={showGuide} onChange={() => (setShowGuide(!showGuide))}></input>
+                            <label>Show guiding comments</label>
+                        </div>
                         {(mode == 1) ? (<p>Current time: {timerValue.toFixed(1)} sec | Record time: {recordTime[page]}{(recordTime[page] == "None") ? "":"s"}</p>) : null}
                     </section>
                 </div>
