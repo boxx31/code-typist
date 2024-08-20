@@ -1,4 +1,4 @@
-const url = "https://sampletypiestvs1.azurewebsites.net";
+const url = "https://typistapi820.azurewebsites.net/";
 //const url = "http://localhost:5274";
 
 export const runJavaCode = async (className, code) => {
