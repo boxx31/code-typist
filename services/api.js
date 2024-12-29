@@ -1,19 +1,19 @@
-//const url = "https://typistapi820.azurewebsites.net/";
-const url = "http://localhost:5274";
+const url = "https://typistapi820.azurewebsites.net/";
+//const url = "http://localhost:5274";
 
-export const runJavaCode = async (sessionId, className, code) => {
+export const runJavaCode = async (className, code) => {
     try {
         const response = await fetch(`${url}/test/info`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ sessionId, className, code }),
+            body: JSON.stringify({ className, code }),
           });
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        
+
         const json = await response.json();
         console.log(json);
         return json;
