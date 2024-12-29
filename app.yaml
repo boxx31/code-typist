@@ -1,0 +1,13 @@
+runtime: nodejs
+env: flex
+
+runtime_config:
+    operating_system: "ubuntu22"
+    runtime_version: "20"
+
+service: default
+
+# Ensure all files are served
+handlers:
+  - url: /.*
+    script: auto

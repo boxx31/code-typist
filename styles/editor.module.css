@@ -1,0 +1,51 @@
+.container {
+    display: grid;
+    border-top: 5px solid rgb(250, 234, 183);
+}
+
+.container:focus-within {
+    border-top: 5px solid rgb(238, 209, 113);
+}
+
+.container>span {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 1.2rem;
+    min-width: 50rem;
+    max-width: 80rem;
+    height: 30rem;
+    overflow-y: auto;
+    border: 1px solid hsl(0, 0%, 80%);
+    padding: 2px;
+    display: inline-block;
+    white-space: pre-wrap;
+    hyphens: none;
+}
+
+.editor {
+    background-color: transparent;
+    color: black;
+    z-index: 1;
+}
+
+.ghost {
+    color: rgb(200, 201, 198);
+    background-color: rgb(255, 249, 238);
+    font-weight: 300;
+    z-index: 0;
+}
+
+@media (forced-colors: active) {
+    .ghost {
+        color: GrayText;
+    }
+    .editor {
+        color: WindowText;
+    }
+}
+
+.ghost>span {
+    background-color: rgb(240, 219, 175);
+    color: rgb(102, 89, 61);
+}
+

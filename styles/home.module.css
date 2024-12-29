@@ -1,0 +1,97 @@
+.sidebar {
+    background-color: rgb(224, 224, 217);
+    border: 3px outset;
+    margin: 4px;
+}
+
+.sidebar button {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    width: 100%;
+    border: 0px;
+}
+
+.sidebar .nav_header {
+    font-size: 1.2rem;
+    font-style: bold;
+}
+
+.sidebar .nav_button {
+    cursor: pointer;
+    color: #515151;
+    font-size: 1.0rem;
+}
+
+.nav_button:hover {
+    border-top: 2px solid rgb(131, 131, 131);
+    border-bottom: 1px dashed rgb(131, 131, 131);
+}
+
+.sidebar .not_attempted_button {
+    background-color: rgb(189, 184, 170);
+}
+
+.sidebar .in_progress_button {
+    background-color: rgb(221, 199, 159);
+}
+
+.sidebar .complete_button {
+    background-color: rgb(158, 202, 138);
+}
+
+.sidebar .current_button {
+    border-top: 4px solid;
+    border-bottom: 2px dashed;
+}
+
+.page {
+    display: flex;
+}
+
+.workspace {
+    display: flex;
+    flex-direction: row;
+}
+
+.workspace>div {
+    margin: 4px;
+}
+
+.toolbar {
+    display: flex;
+    background-color: lavender;
+    align-items: center;
+    padding: 10px;
+    margin: 4px;
+    border-top: 5px solid rgb(188, 188, 240);
+}
+
+.toolbar * {
+    margin-right: 5px;
+}
+
+.toolbar_title {
+    font-weight: 700;
+}
+
+.toolbar button {
+    width: 80px;
+    padding: 10px;
+    background-color: rgb(240, 255, 247);
+    border: 1px solid;
+}
+
+.toolbar button:hover {
+    background-color: rgb(190, 221, 206);
+}
+
+.output {
+    min-width: 5rem;
+    background-color: rgb(255, 249, 238);
+    border-top: 5px solid rgb(250, 234, 183);
+}
+
+.output:focus {
+    border-top: 5px solid rgb(238, 209, 113);
+}

@@ -1,0 +1,7 @@
+http://localhost:3000
+https://code-typist.wl.r.appspot.com/
+https://black-meadow-0c4de721e.5.azurestaticapps.net/
+http://localhost:5274
+https://api-dot-code-typist.wl.r.appspot.com/
+https://sampletypiestvs1.azurewebsites.net/
+https://typistapi820.azurewebsites.net/

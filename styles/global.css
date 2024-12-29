@@ -1,0 +1,21 @@
+mark {
+  background-color: rgb(236, 167, 167);
+  text-decoration: line-through;
+  text-decoration-color: rgb(143, 59, 59);
+  text-decoration-thickness: 3px;
+}
+
+em {
+  background-color: rgb(209, 184, 255);
+  text-decoration: line-through;
+  text-decoration-color: rgb(119, 53, 133);
+  text-decoration-thickness: 3px;
+}
+
+strong {
+  font-weight: 400;
+}
+
+pre {
+  white-space: pre-wrap;
+}

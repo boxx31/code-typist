@@ -1,0 +1,26 @@
+.chatlog {
+    width: 100%;
+    border-top: 5px solid rgb(250, 234, 183);
+    background-color: rgb(255, 249, 238);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(116, 100, 10);
+}
+
+.form {
+    width: 100%;
+    display: flex;
+    border-top: 5px solid rgb(188, 188, 240);
+    padding: 3px;
+    background-color: lavender;
+}
+
+.form button {
+    background-color: rgb(240, 255, 247);
+    border: 1px solid;
+    margin-left: 2px;
+    width: 30px;
+    height: 25px;
+    font-size: 15px;
+    font-weight: 600;
+}

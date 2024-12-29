@@ -1,0 +1,34 @@
+Summary:
+Temporary title: "Code Typist"
+Exercises: printing, variables, if-statements, loops, user input, arrays, classes
+Modes: guided, time challenge, free mode, debugging
+User actions: (Select exercise) > (Select mode ["guided" default]) > (Type & debug & run) > (Switch mode)
+
+Further description of modes:
+In the debugging 
+mode the user gets a similar program in which they must fix 
+the error. (This mode will only be implemented if I have time). 
+In the time challenge all ghost text is replaced by dots, and 
+the user must type the program as fast as possible. In free mode, 
+the user can edit however they want without ghost text. The AI 
+assistant could switch between modes and exercises, generate 
+programs with bugs, and guide the user in error messages.
+
+Todo:
+- Make "guided" mode fully functional (provide comments)
+- Research OPENAI API calls
+- Add error interpretation
+
+Bugs:
+- TYP-3: No memory limit cap
+  - Fixing this apparently requires lots of time
+- TYP-6: No text limit
+- TYP-7: Layout: No resize on open console menu
+- TYP-9: Layout: Screen too small to be on mobile device
+
+Fixed:
+- TYP-1: Copy and paste can change font + add desync
+- TYP-2: No timeout or message for infinite loops
+- TYP-4: Red highlight shown on free modes
+- TYP-5: All forms of non-default code text changing doesn't work (restart button, changing pages)
+- TYP-8: Ghost text box doesn't match up with typed box upon text overflow
